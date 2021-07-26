@@ -141,8 +141,42 @@ def genUserID(userFile, unName):
     userFile.write(str(unName) + ' ' + str(numGen) + '\n')
     return numGen
 
-def qrAnonymizationProgram(inputFile):
-    anonName = "qrAnonymized.csv"
+def qrAnonymizationProgram():
+    global userDict
+    grabAssignmentConfig()
+
+    if os.path.isfile("../key/sessionKeys.txt"):
+        grabSessionKeys()
+    else:
+        generateSessionKeys()
+        saveSessionKeys()
+
+    userFile = open("../key/userKeys.txt", 'a+')
+    if os.path.isfile("../key/userKeys.txt"):
+        grabUserKeys()
+    else:
+        userDict = {}
+    sectionFile = open("../key/sectionKeys.txt", "a+")  # open and grab keys from the section file
+    sectionDict = grabSectionKeys(sectionFile)
+    for unanonFile in entries:
+        anonname = "qr_"
+        inputFile = str(unanonFile)
+        if inputFile == "-1":  # th
+            break
+        inputArray = inputFile.split("_")
+    sectSess = inputArray[1].split(".")
+    section = int(sectSess[0])
+    session = int(sectSess[1])
+    anonSection = anonymizeSection(section, sectionFile)
+    anonSession = sessionDict[session]
+
+    anonname += str(anonSection) + "."
+    anonname += str(anonSession) + "_"
+    inputArray2 = inputArray[2].split("-")
+    assiname = inputArray2[0]
+    assiname = (anonAssignment(assiname))
+    anonname += assiname + ".csv"
+    anonName = anonname
     original = r'../inbox/' + str(inputFile)  # creates relative path locations for the original file
     target = r'../outbox/' + str(anonName)  # creates relative path locations for the target location for the file
     archive = r'../archive/' + str(inputFile)  # creates relative path locations for the archive file
@@ -156,39 +190,41 @@ def qrAnonymizationProgram(inputFile):
             data.append([])  # data appends another array, making it a 2d array
             if counter == 0:  # if this is the first row (column headers)
                 for columnIndex in range(0, len(row)):  # loops through every index for the row
-                    #if columnIndex >= 6:  # if the columnn index is more than 6, this is an assignment name
-                        #data[counter].append(anonAssignment(row[columnIndex]))  # calls the anonAssignment method to anonymize the name
-                        # appends it to the 2d array of the current row (counter)
+                    # if columnIndex >= 6:  # if the columnn index is more than 6, this is an assignment name
+                    # data[counter].append(anonAssignment(row[columnIndex]))  # calls the anonAssignment method to anonymize the name
+                    # appends it to the 2d array of the current row (counter)
                     if columnIndex <= 2 or columnIndex == 4 or columnIndex == 7:  # These columns need to be deleted (first name, last name, ...)
                         pass  # pass so it never gets added to the data 2d array
                     else:
                         columnName = row[columnIndex]
-                        if(columnName== "Manual Score"):
+                        if (columnName == "Question ID"):
+                            columnName = "User ID"
+                        if (columnName == "Manual Score"):
                             columnName = "Points Received"
                         data[counter].append(columnName)  # this means it is a columnn that can stay unchanged
             else:  # if this is not the first row (actual data of the students)
-                if(counter<10):
-                    strcounter = str(counter)
-                    data[counter].append('0'+strcounter)
-                else:
-                    data[counter].append(counter)
-                for columnIndex in range(5, len(row)-1):
-                    rowinp= row[columnIndex]# appends the student data from column 6 and on (student scores)
-                    if(columnIndex== 5 and (rowinp.lower() == "right" or rowinp.lower() == "wrong")) :
+               # print(row)
+                if row and (row[2] in userDict.keys()):
+                    data[counter].append(userDict[row[2]])
+                elif row:
+                    data[counter].append(genUserID(userFile, row[2]))
+                for columnIndex in range(5, len(row) - 1):
+                    rowinp = row[columnIndex]  # appends the student data from column 6 and on (student scores)
+                    if (columnIndex == 5 and (rowinp.lower() == "right" or rowinp.lower() == "wrong")):
                         rowinp = "TF"
-                    elif(columnIndex==5 and (rowinp.find("__")!=1)):
-                        rowinp= "FITB"
+                    elif (columnIndex == 5 and (rowinp.find("__") != 1)):
+                        rowinp = "FITB"
                     data[counter].append(rowinp)
                     # appends the data to the 2d array
             counter += 1  # increments counter, signifying to go to the next row, stepping the 2d array when it is called
 
     with open(target, 'w', newline='') as csvfile:  # creates a new csv file at target path
         writer = csv.writer(csvfile)  # writer starts writing into file
-        for row in data:  # for every row in the 2d array data (row is an array here)
-            writer.writerow(row)  # writes row, the 1d array, into the file
-
+        for row in data:
+            if row:# for every row in the 2d array data (row is an array here)
+                writer.writerow(row)  # writes row, the 1d array, into the file
     shutil.move(original, archive)  # moves the original file into the archive path
-
+    
 def main():
     global userDict
     grabAssignmentConfig()
