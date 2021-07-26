@@ -8,42 +8,52 @@ import shutil
 from datetime import date
 import csv
 
-try:
-    entries = os.listdir('../inbox/')
-except FileNotFoundError:
-    exit("You do not have an inbox folder!")
-
-try:
-    os.listdir('../outbox/')
-except FileNotFoundError:
-    exit("You do not have an outbox folder!")
-
-print("Here are the files to be anonymized: ")
-for entry in entries:
-    print(entry)
-
+inboxFiles = []
 userDict = {}
+sessData = None
 
-sessCon = open('../config/session-config.json',)
-sessData = json.load(sessCon)
-
-assiCon = open('../predefined-key/assignment-config.json',)
-assiData = json.load(assiCon)
 assignmentNames = {}
-
-userCon = open('../config/user-config.json')
-userConData = json.load(userCon)
-minUser = userConData['min_key']
-maxUser = userConData['max_key']
-
+sessionDict = {}
 sectionDict = {}
 sectMult = 0.03
-sessionDict = {}
-lastKey = sessData['start_key']
+
+minUser=0
+maxUser=100000000
+
+def getInboxFiles():
+    global inboxFiles
+
+    try:
+        inboxFiles = os.listdir('../inbox/')
+    except FileNotFoundError:
+        exit("You do not have an inbox folder!")
+
+def checkOutboxFolder():
+    try:
+        os.listdir('../outbox/')
+    except FileNotFoundError:
+        exit("You do not have an outbox folder!")
+
+def printInboxFiles():
+    global inboxFiles
+    print("Here are the files to be anonymized: ")
+    for entry in inboxFiles:
+        print(entry)
+
+def getUserConfigurationFile():
+    global minUser
+    global maxUser
+
+    userCon = open('../config/user-config.json')
+    userConData = json.load(userCon)
+    minUser = userConData['min_key']
+    maxUser = userConData['max_key']
 
 def grabAssignmentConfig():
     global assignmentNames
 
+    assiCon = open('../predefined-key/assignment-config.json',)
+    assiData = json.load(assiCon)
     assignmentArray = assiData['assignments']
     for group in assignmentArray:
         assignmentNames[group['name']] = group['code']
@@ -71,19 +81,23 @@ def grabSessionKeys():
 def saveSessionKeys():
     global sessionDict
 
+
     print("No session keys file found, creating new file!")
     file = open("../key/sessionKeys.txt", "w+")
     for keyName in sorted(sessionDict.keys()):
         file.write(str(keyName) + " " + str(sessionDict[keyName]) + "\n")
     file.close()
 
-
 def generateSessionKeys():
-    global lastKey
     global sessionDict
+
+    sessCon = open('../config/session-config.json',)
+    sessData = json.load(sessCon)
 
     startYear = sessData['start_year']
     endYear = sessData['end_year']
+    lastKey = sessData['start_key']
+
     for i in range(startYear,endYear+1):
         for sem in sessData['semesters_list']:
             sessionDict[(i*100+sem)] = lastKey
@@ -141,93 +155,88 @@ def genUserID(userFile, unName):
     userFile.write(str(unName) + ' ' + str(numGen) + '\n')
     return numGen
 
-def qrAnonymizationProgram():
+def qrAnonymizationProgram(inputFile):
     global userDict
-    grabAssignmentConfig()
 
-    if os.path.isfile("../key/sessionKeys.txt"):
-        grabSessionKeys()
-    else:
-        generateSessionKeys()
-        saveSessionKeys()
+    # sectionFile = open("../key/sectionKeys.txt", "a+")  # open and grab keys from the section file
+    # sectionDict = grabSectionKeys(sectionFile)
+    # for unanonFile in inboxFiles:
+    #     anonname = "qr_"
+    #     inputFile = str(unanonFile)
+    #     if inputFile == "-1":  # th
+    #         break
+    #     inputArray = inputFile.split("_")
+    # sectSess = inputArray[1].split(".")
+    # section = int(sectSess[0])
+    # session = int(sectSess[1])
+    # anonSection = anonymizeSection(section, sectionFile)
+    # anonSession = sessionDict[session]
 
-    userFile = open("../key/userKeys.txt", 'a+')
-    if os.path.isfile("../key/userKeys.txt"):
-        grabUserKeys()
-    else:
-        userDict = {}
-    sectionFile = open("../key/sectionKeys.txt", "a+")  # open and grab keys from the section file
-    sectionDict = grabSectionKeys(sectionFile)
-    for unanonFile in entries:
-        anonname = "qr_"
-        inputFile = str(unanonFile)
-        if inputFile == "-1":  # th
-            break
-        inputArray = inputFile.split("_")
-    sectSess = inputArray[1].split(".")
-    section = int(sectSess[0])
-    session = int(sectSess[1])
-    anonSection = anonymizeSection(section, sectionFile)
-    anonSession = sessionDict[session]
+    # anonname += str(anonSection) + "."
+    # anonname += str(anonSession) + "_"
+    # inputArray2 = inputArray[2].split("-")
+    # assiname = inputArray2[0]
+    # assiname = (anonAssignment(assiname))
+    # anonname += assiname + ".csv"
+    # anonName = anonname
+    # original = r'../inbox/' + str(inputFile)  # creates relative path locations for the original file
+    # target = r'../outbox/' + str(anonName)  # creates relative path locations for the target location for the file
+    # archive = r'../archive/' + str(inputFile)  # creates relative path locations for the archive file
 
-    anonname += str(anonSection) + "."
-    anonname += str(anonSession) + "_"
-    inputArray2 = inputArray[2].split("-")
-    assiname = inputArray2[0]
-    assiname = (anonAssignment(assiname))
-    anonname += assiname + ".csv"
-    anonName = anonname
-    original = r'../inbox/' + str(inputFile)  # creates relative path locations for the original file
-    target = r'../outbox/' + str(anonName)  # creates relative path locations for the target location for the file
-    archive = r'../archive/' + str(inputFile)  # creates relative path locations for the archive file
+    # data = []  # this data array will be used to store the data in the csv file
+    # counter = 0  # counter for the algorithm, will act as the row counter
+    # ffiledate = date(2021, 6, 1)  # sets the first date
+    # with open(original, newline='') as csvfile:  # grabs the file that exists at original, opens it
+    #     reader = csv.reader(csvfile)  # reader scans through original file
+    #     for row in reader:  # loops through every row in reader (row is an array of the columns for the row)
+    #         data.append([])  # data appends another array, making it a 2d array
+    #         if counter == 0:  # if this is the first row (column headers)
+    #             for columnIndex in range(0, len(row)):  # loops through every index for the row
+    #                 # if columnIndex >= 6:  # if the columnn index is more than 6, this is an assignment name
+    #                 # data[counter].append(anonAssignment(row[columnIndex]))  # calls the anonAssignment method to anonymize the name
+    #                 # appends it to the 2d array of the current row (counter)
+    #                 if columnIndex <= 2 or columnIndex == 4 or columnIndex == 7:  # These columns need to be deleted (first name, last name, ...)
+    #                     pass  # pass so it never gets added to the data 2d array
+    #                 else:
+    #                     columnName = row[columnIndex]
+    #                     if (columnName == "Question ID"):
+    #                         columnName = "User ID"
+    #                     if (columnName == "Manual Score"):
+    #                         columnName = "Points Received"
+    #                     data[counter].append(columnName)  # this means it is a columnn that can stay unchanged
+    #         else:  # if this is not the first row (actual data of the students)
+    #            # print(row)
+    #             if row and (row[2] in userDict.keys()):
+    #                 data[counter].append(userDict[row[2]])
+    #             elif row:
+    #                 data[counter].append(genUserID(userFile, row[2]))
+    #             for columnIndex in range(5, len(row) - 1):
+    #                 rowinp = row[columnIndex]  # appends the student data from column 6 and on (student scores)
+    #                 if (columnIndex == 5 and (rowinp.lower() == "right" or rowinp.lower() == "wrong")):
+    #                     rowinp = "TF"
+    #                 elif (columnIndex == 5 and (rowinp.find("__") != 1)):
+    #                     rowinp = "FITB"
+    #                 data[counter].append(rowinp)
+    #                 # appends the data to the 2d array
+    #         counter += 1  # increments counter, signifying to go to the next row, stepping the 2d array when it is called
 
-    data = []  # this data array will be used to store the data in the csv file
-    counter = 0  # counter for the algorithm, will act as the row counter
-    ffiledate = date(2021, 6, 1)  # sets the first date
-    with open(original, newline='') as csvfile:  # grabs the file that exists at original, opens it
-        reader = csv.reader(csvfile)  # reader scans through original file
-        for row in reader:  # loops through every row in reader (row is an array of the columns for the row)
-            data.append([])  # data appends another array, making it a 2d array
-            if counter == 0:  # if this is the first row (column headers)
-                for columnIndex in range(0, len(row)):  # loops through every index for the row
-                    # if columnIndex >= 6:  # if the columnn index is more than 6, this is an assignment name
-                    # data[counter].append(anonAssignment(row[columnIndex]))  # calls the anonAssignment method to anonymize the name
-                    # appends it to the 2d array of the current row (counter)
-                    if columnIndex <= 2 or columnIndex == 4 or columnIndex == 7:  # These columns need to be deleted (first name, last name, ...)
-                        pass  # pass so it never gets added to the data 2d array
-                    else:
-                        columnName = row[columnIndex]
-                        if (columnName == "Question ID"):
-                            columnName = "User ID"
-                        if (columnName == "Manual Score"):
-                            columnName = "Points Received"
-                        data[counter].append(columnName)  # this means it is a columnn that can stay unchanged
-            else:  # if this is not the first row (actual data of the students)
-               # print(row)
-                if row and (row[2] in userDict.keys()):
-                    data[counter].append(userDict[row[2]])
-                elif row:
-                    data[counter].append(genUserID(userFile, row[2]))
-                for columnIndex in range(5, len(row) - 1):
-                    rowinp = row[columnIndex]  # appends the student data from column 6 and on (student scores)
-                    if (columnIndex == 5 and (rowinp.lower() == "right" or rowinp.lower() == "wrong")):
-                        rowinp = "TF"
-                    elif (columnIndex == 5 and (rowinp.find("__") != 1)):
-                        rowinp = "FITB"
-                    data[counter].append(rowinp)
-                    # appends the data to the 2d array
-            counter += 1  # increments counter, signifying to go to the next row, stepping the 2d array when it is called
+    # with open(target, 'w', newline='') as csvfile:  # creates a new csv file at target path
+    #     writer = csv.writer(csvfile)  # writer starts writing into file
+    #     for row in data:
+    #         if row:# for every row in the 2d array data (row is an array here)
+    #             writer.writerow(row)  # writes row, the 1d array, into the file
+    # shutil.move(original, archive)  # moves the original file into the archive path
 
-    with open(target, 'w', newline='') as csvfile:  # creates a new csv file at target path
-        writer = csv.writer(csvfile)  # writer starts writing into file
-        for row in data:
-            if row:# for every row in the 2d array data (row is an array here)
-                writer.writerow(row)  # writes row, the 1d array, into the file
-    shutil.move(original, archive)  # moves the original file into the archive path
-    
 def main():
+    global inboxFiles
     global userDict
+
+    checkOutboxFolder()
+    getInboxFiles()
+    printInboxFiles()
+
     grabAssignmentConfig()
+    getUserConfigurationFile()
 
     if os.path.isfile("../key/sessionKeys.txt"):
         grabSessionKeys()
@@ -248,7 +257,7 @@ def main():
     f = open("../key/anonymization-results.txt", "w+")  # this is the anonymization-results file, doesn't really matter
     f.write("initial name  =>  anonymized name\n\n")  # writes into the file
 
-    for unanonFile in entries:
+    for unanonFile in inboxFiles:
         anonName = "gc_"
         inputFile = str(unanonFile)
         if inputFile == "-1":  # th
