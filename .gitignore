@@ -1,3 +1,12 @@
+all_download/*.*
+archive/*.*
+download/*.*
+inbox/*.*
+key/*.*
+outbox/*.*
+predefined-key/*.*
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
