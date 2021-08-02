@@ -62,7 +62,8 @@ class SessionKey:
 
 class AssignmentKey:
     configurationFileName = '../predefined-key/assignment-config.json'
-    
+    defaultTotalZeroPoints = 1
+
     dictionary = {}
 
     def load(self):
@@ -78,14 +79,23 @@ class AssignmentKey:
 
     def getGC(self, gcName):
         pointsSplit = gcName.split("[")
+        pointsPart = pointsSplit[1].split(' ')[2]
+        points = 0.0
+        if pointsPart == 'up':
+            points = float(pointsSplit[1].split(' ')[4])
+        else:
+            points = float(pointsPart)      
+
         nameSplit = pointsSplit[0].split('-')[0].split('(')[0]
         name = str(nameSplit).strip()  # + ' [' + points + ']'
+        if points == 0:
+            points == self.defaultTotalZeroPoints
         if name in self.dictionary:
-            return self.dictionary[name]
+            return self.dictionary[name], points
         else:
             #print("Assignment name: " + anonAssiName + " not found within config file")
             #print("Defaulting assignment name.")
-            return "IGNORE"
+            return "IGNORE", points
 
 # User Anonymization Key 
 
@@ -276,7 +286,7 @@ class AnonymProcess:
         outputName += str(dayDiff) + "-" + dateArray[3] + "-" + dateArray[4] + ".csv"
         return outputName
     
-    def gcProcess(self,inputFile):
+    def gcProcess(self,inputFile, format):
         inputFileName=str(inputFile)
         outputFileName=self.gcProcessFileName(inputFileName)
         print("Process GC file: "+str(inputFileName))
@@ -288,6 +298,7 @@ class AnonymProcess:
         archiveFile = self.archiveFolder + inputFileName
 
         data = []
+        points = []
         counter = 0
         ffiledate = date(2021, 6, 1)
         with open(inboxFile, newline='') as csvfile:
@@ -299,7 +310,9 @@ class AnonymProcess:
                 if counter == 0:
                     for columnIndex in range(0, len(row)):
                         if columnIndex >= 6:
-                            data[counter].append(self.key.assignmentKey.getGC(row[columnIndex]))
+                            assignmentName, assignmentPoints = self.key.assignmentKey.getGC(row[columnIndex])
+                            points.append(assignmentPoints)
+                            data[counter].append(assignmentName)
                         elif columnIndex < 2 or columnIndex == 5 or columnIndex == 3 or columnIndex == 4:
                             pass
                         else:
@@ -314,7 +327,14 @@ class AnonymProcess:
                     # data[counter].append(str(dayDiff))
 
                     for columnIndex in range(6, len(row)):
-                        data[counter].append(row[columnIndex])
+                        try: 
+                            val = float(row[columnIndex])
+                            if format=="percent":
+                                val = val/points[columnIndex-6]
+                            data[counter].append(val)                            
+                        except:
+                            data[counter].append("")
+
                 counter += 1
 
         with open(outboxFile, 'w', newline='') as csvfile:
@@ -332,13 +352,14 @@ class AnonymProcess:
         fileName=str(inputFile)
         print("Process AA file: "+str(fileName))
 
-    def run(self):
+    # format: "points" or "percent"
+    def run(self, format):
         for inFile in self.inboxFiles:
             inFileName = str(inFile)
             if inFileName == "-1":  # th
                 break
             if inFileName.startswith("gc_"):
-                self.gcProcess(inFile)
+                self.gcProcess(inFile, format)
             elif inFileName.startswith("qr_"):
                 self.qrProcess(inFile)
             elif inFileName.startswith("aa_"):
@@ -349,7 +370,7 @@ class AnonymProcess:
 
 def main():
     process = AnonymProcess()
-    process.run()
+    process.run("percent")
     # process.print()
 
 if __name__ == '__main__':
