@@ -1,6 +1,3 @@
-# David Liu
-# 7-8-21
-
 import random
 import os
 import json
@@ -155,17 +152,82 @@ def genUserID(userFile, unName):
     userFile.write(str(unName) + ' ' + str(numGen) + '\n')
     return numGen
 
+def anonQRfilename(filename):
+    anonname = "qr_"
+
+    sectSess = inputArray[1].split(".")
+    section = int(sectSess[0])
+    session = int(sectSess[1])
+    anonSection = anonymizeSection(section, sectionFile)
+    anonSession = sessionDict[session]
+    anonname += str(anonSection) + "."
+    anonname += str(anonSession) + "_"
+    inputArray2 = inputArray[2].split("-")
+    assiname = inputArray2[0]
+    assiname = (anonAssignment(assiname))
+    anonname += assiname + ".csv"
+    return anonname
+
+def anonQRdata():
+    data = []  # this data array will be used to store the data in the csv file
+    counter = 0  # counter for the algorithm, will act as the row counter
+    ffiledate = date(2021, 6, 1)  # sets the first date
+    with open(original, newline='') as csvfile:  # grabs the file that exists at original, opens it
+        reader = csv.reader(csvfile)  # reader scans through original file
+        for row in reader:  # loops through every row in reader (row is an array of the columns for the row)
+            data.append([])  # data appends another array, making it a 2d array
+            if counter == 0:  # if this is the first row (column headers)
+                for columnIndex in range(0, len(row)):  # loops through every index for the row
+                    # if columnIndex >= 6:  # if the columnn index is more than 6, this is an assignment name
+                    # data[counter].append(anonAssignment(row[columnIndex]))  # calls the anonAssignment method to anonymize the name
+                    # appends it to the 2d array of the current row (counter)
+                    if columnIndex <= 2 or columnIndex == 4 or columnIndex == 7:  # These columns need to be deleted (first name, last name, ...)
+                        pass  # pass so it never gets added to the data 2d array
+                    else:
+                        columnName = row[columnIndex]
+                        if (columnName == "Question ID"):
+                            columnName = "User ID"
+                        if (columnName == "Manual Score"):
+                            columnName = "Points Received"
+                        data[counter].append(columnName)  # this means it is a columnn that can stay unchanged
+            else:  # if this is not the first row (actual data of the students)
+               # print(row)
+                if row and (row[2] in userDict.keys()):
+                    data[counter].append(userDict[row[2]])
+                elif row:
+                    data[counter].append(genUserID(userFile, row[2]))
+                for columnIndex in range(5, len(row) - 1):
+                    rowinp = row[columnIndex]  # appends the student data from column 6 and on (student scores)
+                    if (columnIndex == 5 and (rowinp.lower() == "right" or rowinp.lower() == "wrong")):
+                        rowinp = "TF"
+                    elif (columnIndex == 5 and (rowinp.find("__") != 1)):
+                        rowinp = "FITB"
+                    data[counter].append(rowinp)
+                    # appends the data to the 2d array
+            counter += 1  # increments counter, signifying to go to the next row, stepping the 2d array when it is called
+    return data
+
 def qrAnonymizationProgram(inputFile):
     global original
     global archive
-
+    original = r'../inbox/' + str(inputFile)
+    target = r'../outbox/' + anonQRfilename(inputFile)
+    archive = r'../archive/' + str(inputFile)
+    data = anonQRdata()
+    with open(target, 'w', newline='') as csvfile:  # creates a new csv file at target path
+        writer = csv.writer(csvfile)  # writer starts writing into file
+        for row in data:
+            if row:# for every row in the 2d array data (row is an array here)
+                writer.writerow(row)  # writes row, the 1d array, into the file
     #shutil.move(original, archive)  # moves the original file into the archive path
-
-
 
 def main():
     global inboxFiles
+    global inputArray
     global userDict
+    global userFile
+    global sectionFile
+    global sectionDict
 
     checkOutboxFolder()
     getInboxFiles()
@@ -200,7 +262,8 @@ def main():
             break
         inputArray = inputFile.split("_")
         if inputArray[0] == 'qr':
-            qrAnonymizationProgram(inputFile) 
+            #anonQRfilename(inputFile)
+            qrAnonymizationProgram(inputFile)
 
         elif len(inputArray) != 4:
             print("----> Unexpected Name Format! Try again.  :(")
