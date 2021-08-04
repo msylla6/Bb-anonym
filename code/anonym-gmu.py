@@ -419,24 +419,51 @@ class AnonymProcess:
     def aaProcessFileName(self, fileName):
         outputName = "aa_"
         inputArray = fileName.split("_")
-        if len(inputArray) != 4:
-            exit("Unexpected file name"+fileName)
         # section
         outputName += str(self.key.sectionKey.get(inputArray[1]))
-        # type 
-        outputName += "_" + inputArray[2] + "_"
-
+        # type
+        assiname = inputArray[2]
+        assiname = (self.key.assignmentKey.getQR(assiname))
+        outputName += "_" + assiname + ".csv"
         return outputName
+
+    def aaProcessData(self, fileName):
+        data = []  # this data array will be used to store the data in the csv file
+        counter = 0  # counter for the algorithm, will act as the row counter
+        with open(fileName, newline='') as csvfile:  # grabs the file that exists at original, opens it
+            reader = csv.reader(csvfile)  # reader scans through original file
+            for row in reader:  # loops through every row in reader (row is an array of the columns for the row)
+                data.append([])  # data appends another array, making it a 2d array
+                if counter == 0:  # if this is the first row (column headers)
+                    data[counter].append("User ID")
+                    data[counter].append("Grade")
+                    data[counter].append("Attempt")
+                    data[counter].append("Duration")
+                else:  # if this is not the first row (actual data of the students)
+                # print(row)
+                    data[counter].append(self.key.userKey.get(row[2]))
+                    data[counter].append(row[3])
+                    data[counter].append(row[4])
+                    data[counter].append(row[7])
+                counter += 1  # increments counter, signifying to go to the next row, stepping the 2d array when it is called
+        return data
 
     def aaProcess(self,inputFile):
         inputFileName=str(inputFile)
-        # outputFileName=self.aaProcessFileName(inputFileName)
-        # print("Process GC file: "+str(inputFileName))
-        # print("Output GC file: "+str(outputFileName))
+        outputFileName=self.aaProcessFileName(inputFileName)
+        print("Process AA file: "+str(inputFileName))
+        print("Output AA file: "+str(outputFileName))
  
-        # inboxFile = self.inboxFolder+inputFileName
-        # outboxFile = self.outboxFolder + str(outputFileName)
-        # archiveFile = self.archiveFolder + inputFileName
+        original = r'../inbox/' + str(inputFile)
+        target = r'../outbox/' + outputFileName
+        archive = r'../archive/' + str(inputFile)
+        data = self.aaProcessData(original)
+        with open(target, 'w', newline='') as csvfile:  # creates a new csv file at target path
+            writer = csv.writer(csvfile)  # writer starts writing into file
+            for row in data:
+                if row:# for every row in the 2d array data (row is an array here)
+                    writer.writerow(row)  # writes row, the 1d array, into the file
+        shutil.move(original, archive) 
 
     # format: "points" or "percent"
     def run(self, format):
