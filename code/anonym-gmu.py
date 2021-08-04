@@ -1,5 +1,5 @@
 # Compiled by Mihai Boicu based on code created by:
-# - David Liu (a1.py)
+# - David Liu (a1.py, a2.py gc processing)
 # - Anish Malik (a3.py - qr processing)
 
 import random
@@ -292,7 +292,6 @@ class AnonymProcess:
         print("Process GC file: "+str(inputFileName))
         print("Output GC file: "+str(outputFileName))
  
-
         inboxFile = self.inboxFolder+inputFileName
         outboxFile = self.outboxFolder + str(outputFileName)
         archiveFile = self.archiveFolder + inputFileName
@@ -344,13 +343,45 @@ class AnonymProcess:
 
         shutil.move(inboxFile, archiveFile)   
 
+    def qrProcessFileName(self, fileName):
+        outputName = "qr_"
+        inputArray = fileName.split("_")
+        # section
+        outputName += str(self.key.sectionKey.get(inputArray[1]))
+        # type
+        outputName += "_" + inputArray[2] + "_"
+        inputArray2 = inputArray[2].split("-")
+        assiname = inputArray2[0]
+        assiname = (self.key.assignmentKey.getQR(assiname))
+        outputName += assiname + ".csv"
+        return outputName
+
+
     def qrProcess(self,inputFile):
         fileName=str(inputFile)
         print("Process QR file: "+str(fileName))
     
+    def aaProcessFileName(self, fileName):
+        outputName = "aa_"
+        inputArray = fileName.split("_")
+        if len(inputArray) != 4:
+            exit("Unexpected file name"+fileName)
+        # section
+        outputName += str(self.key.sectionKey.get(inputArray[1]))
+        # type 
+        outputName += "_" + inputArray[2] + "_"
+
+        return outputName
+
     def aaProcess(self,inputFile):
-        fileName=str(inputFile)
-        print("Process AA file: "+str(fileName))
+        inputFileName=str(inputFile)
+        # outputFileName=self.aaProcessFileName(inputFileName)
+        # print("Process GC file: "+str(inputFileName))
+        # print("Output GC file: "+str(outputFileName))
+ 
+        # inboxFile = self.inboxFolder+inputFileName
+        # outboxFile = self.outboxFolder + str(outputFileName)
+        # archiveFile = self.archiveFolder + inputFileName
 
     # format: "points" or "percent"
     def run(self, format):
@@ -368,9 +399,29 @@ class AnonymProcess:
                 print("Unknown type of file: "+inFileName)
         self.key.save()
 
+def establishConfig():
+    assiConfig = open('../predefined-key/assignment-config.json')
+    assiArray = json.load(assiConfig)['assignments']
+    unlimitedArray = []
+    twoTrialsArray = []
+    oneTrialArray = []
+    for dict in assiArray:
+        if 'Cumulative' in dict['name']:
+            unlimitedArray.append(dict['code'])
+        elif 'Final Exam' in dict['name']:
+            oneTrialArray.append(dict['code'])
+        elif 'Quiz' in dict['name']:
+            twoTrialsArray.append(dict['code'])
+    print('Unlimited Assignments: ', unlimitedArray)
+    print('One Trial Assignments: ', oneTrialArray)
+    print('Two Trial Assignments: ', twoTrialsArray)
+    return unlimitedArray, oneTrialArray, twoTrialsArray
+
 def main():
     process = AnonymProcess()
     process.run("percent")
+
+    unlimitedArray, oneTrialArray, twoTrialsArray = establishConfig()
     # process.print()
 
 if __name__ == '__main__':
