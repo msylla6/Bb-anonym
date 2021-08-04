@@ -363,7 +363,6 @@ class AnonymProcess:
         outputName += "_" + assiname + ".csv"
         return outputName
 
-
     def qrProcessData(self, fileName):
         data = []  # this data array will be used to store the data in the csv file
         counter = 0  # counter for the algorithm, will act as the row counter
