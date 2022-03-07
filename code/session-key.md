@@ -1,5 +1,5 @@
 # Understanding of the class Session Key - By Anushree Manoharrao
-If the sessionskey.txt file exists, 
+If the sessionsKeys.txt file exists, 
 - then the function “load” is executed. 
 - else, generate and save functions are executed in that order. 
 
