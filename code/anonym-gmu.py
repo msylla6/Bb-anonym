@@ -174,7 +174,7 @@ class SectionKey:
         lines = file.readlines()
         for line in lines:
             sections = line.split(" ")
-            self.dictionary[int(sections[0])] = int(sections[1])
+            self.dictionary[str(sections[0])] = sections[1]
         file.close()
 
     def save(self):
@@ -423,6 +423,7 @@ class AnonymProcess:
         outputName += str(self.key.sectionKey.get(inputArray[1]))
         # type
         assiname = inputArray[2]
+        assiname = assiname.split("-")[0]
         assiname = (self.key.assignmentKey.getQR(assiname))
         outputName += "_" + assiname + ".csv"
         return outputName
