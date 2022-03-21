@@ -3,7 +3,7 @@
 # - David Liu (a1.py, a2.py gc processing)
 # - Anish Malik (a3.py - qr processing) 
 # 2022 March-
-# - Anushree Manoharrao (session-key.py - documentation,comments)s 
+# - Anushree Manoharrao (session-key.py - documentation,comments) 
 
 import random
 import os
