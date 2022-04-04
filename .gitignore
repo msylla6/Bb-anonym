@@ -1,5 +1,6 @@
 all_download/*.*
 archive/*.*
+config/*.*
 download/*.*
 inbox/*.*
 key/*.*
