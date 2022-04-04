@@ -11,7 +11,7 @@
 #used to open the file and read the data only after this is done the user needs to save the file and then input data
 #Once the file is input the data gets allocated and generated for startyear, endyear, lastkey, minstep, maxstep and semster
 #following the generate code there is then added randomization code to keep privacy of students lastKey += random.randint(minStep, maxStep)
-# finally #Initialize and checks if file exist if does not generates a new data it saves it.
+# finally - Initialize and checks if file exist if does not generates a new data it saves it.
 
 import random
 import os
