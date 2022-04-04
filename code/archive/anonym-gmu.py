@@ -241,6 +241,8 @@ class AnonymKey:
 
 # Anonymization Process Class
 
+#Mouhamed Sylla comments
+#Create classes anonym process  and make the inboxFolder, outboxFolder, and archive Folder
 class AnonymProcess:
     inboxFolder = '../inbox/'
     outboxFolder = '../outbox/'
@@ -250,71 +252,80 @@ class AnonymProcess:
 
     inboxFiles = []
 
+#defines inboxDolder and trys to return the list to the program but if the file is not found returns a message and exits
+#but continues to next folder
     def initInboxFiles(self):
         try:
             self.inboxFiles = os.listdir(self.inboxFolder)
         except FileNotFoundError:
             exit("You do not have an inbox folder!")
-
+#defines outboxfolder and try to access the propeties of the object outbox so the program looks for the file and if not found
+#returns an exit message and moves on to next portion
     def initOutboxFolder(self):
         try:
             os.listdir(self.outboxFolder)
         except FileNotFoundError:
             exit("You do not have an outbox folder!")
-
+#Function trys to access propeties of InboxFiles and OutboxFolder
     def __init__(self):
         self.initInboxFiles()
         self.initOutboxFolder()
 
+#Defines a new printInboxFiles and prints an output of Inbox Files then prints the entry
     def printInboxFiles(self):
         print("*****")
         print("INBOX files:")
         for entry in self.inboxFiles:
             print(entry)
-    
+
     def print(self):
         self.key.print()
         self.printInboxFiles()
-    
+
+#Defines a new function named gcProcessFilename and references itself to do task
     def gcProcessFileName(self, fileName):
         outputName = "gc_"
+#Uses the split function to seprate filenames
         inputArray = fileName.split("_")
+#If the length of the inputArray is not 4 the program sends a message and exits
         if len(inputArray) != 4:
-            exit("Unexpected file name"+fileName)
+            exit("Unexpected file name" + fileName)
         # section
         outputName += str(self.key.sectionKey.get(inputArray[1]))
-        # type 
+        # type
         outputName += "_" + inputArray[2] + "_"
         # date-time
         dateArray = inputArray[3].split("-")
         # 2021-06-24-09-37-32
         # 0    1  2  3  4  5
+#Shows the filename, year, section, day difference and starts an if statment
         stringName = str(fileName)
         yearName = stringName[9:13]
         sectionY = int(yearName)
         fileY = int(int(dateArray[0]))
         dayDiff = 400
         if fileY == sectionY:
-            term=str(inputArray[1])[11]
-            month=1
-            if term=="1":
-                month=1
-            elif term=="4":
-                month=5
-            elif term=="7":
-                month=8
+            term = str(inputArray[1])[11]
+            month = 1
+            if term == "1":
+                month = 1
+            elif term == "4":
+                month = 5
+            elif term == "7":
+                month = 8
             f_date = date(fileY, month, 15)
             l_date = date(int(dateArray[0]), int(dateArray[1]), int(dateArray[2]))
             delta = l_date - f_date
             dayDiff = delta.days + 1
         outputName += str(dayDiff) + "-" + dateArray[3] + "-" + dateArray[4] + ".csv"
         return outputName
-    
-    def gcProcess(self,inputFile, format):
-        inputFileName=str(inputFile)
-        outputFileName=self.gcProcessFileName(inputFileName)
-        print("Process GC file: "+str(inputFileName))
-        print("Output GC file: "+str(outputFileName))
+#Makes gcprocess function and accesses itself to make the input file a string and to print
+# the process gc file and output gc file
+    def gcProcess(self, inputFile, format):
+        inputFileName = str(inputFile)
+        outputFileName = self.gcProcessFileName(inputFileName)
+        print("Process GC file: " + str(inputFileName))
+        print("Output GC file: " + str(outputFileName))
  
         inboxFile = self.inboxFolder+inputFileName
         outboxFile = self.outboxFolder + str(outputFileName)
