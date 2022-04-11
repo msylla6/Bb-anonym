@@ -13,14 +13,14 @@ Before you use session keys, you must define the configuration file.
  - List of semesters in GMU is described, where 10,40,70 are Spring, Summer and Fall respectively.
  - To randomize the session values, a start value along with a range for min and max step is used.
 
- { 
-  "start_year": 2004, 
-  "end_year": 2030,
-  "semesters_list": [10, 40, 70],
-  "start_key": 100,
-  "min_step": 10,
-  "max_step": 100
- }
+> { 
+>  "start_year": 2004, 
+>  "end_year": 2030,
+>  "semesters_list": [10, 40, 70],
+>  "start_key": 100,
+>  "min_step": 10,
+>  "max_step": 100
+> }
 
 If the sessionsKeys.txt file exists, 
 - then the function <strong>load</strong> is executed. 
