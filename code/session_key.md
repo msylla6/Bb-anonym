@@ -12,7 +12,7 @@ Before you use session keys, you must define the configuration file.
  - Start year and end year are defined, which tells about the range of time for which we are running the code to anonymize the values.
  - List of semesters in GMU is described, where 10,40,70 are Spring, Summer and Fall respectively.
  - To randomize the session values, a start value along with a range for min and max step is used.
-
+`
 > { 
 >  "start_year": 2004, 
 >  "end_year": 2030,
@@ -21,7 +21,7 @@ Before you use session keys, you must define the configuration file.
 >  "min_step": 10,
 >  "max_step": 100
 > }
-
+`
 If the sessionsKeys.txt file exists, 
 - then the function <strong>load</strong> is executed. 
 - else, <strong> generate </strong> and <strong> save </strong> functions are executed in that order. 
