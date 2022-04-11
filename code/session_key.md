@@ -1,4 +1,9 @@
 # Understanding of the class Session Key - By Anushree Manoharrao
+
+The class SessionKey is managing a dictionary to anonymize a session in GMU format (e.g. 202140, which correspond to Summer 2021) to a number, keeping the chronological order not changed.
+
+
+
 If the sessionsKeys.txt file exists, 
 - then the function <strong>load</strong> is executed. 
 - else, <strong> generate </strong> and <strong> save </strong> functions are executed in that order. 
@@ -29,6 +34,7 @@ If the sessionsKeys.txt file exists,
   <li>  It creates a new file by writing to sessionkeys.txt file by reading from the dictionary generated </li>
   <li>  It appends the key and values using a space to the txt file </li>
 </ul>
+
 
 
 ##### Sample session-config.json
@@ -63,4 +69,14 @@ It keeps incrementing and adding in the same way for all the semesters till the 
 - sessionKeys.txt has to be created under the same root path with a new folder <strong>key</strong> with a path like  "../key/sessionKeys.txt"
 
 
+=======
+# TO BE REVISED: 
+#  import random, os, and json. Random is used to randomize keys and data. Json is needed to be imported to
+#parse the data that we get from the files with the keys and data so it is easier to divey up data and give random numbers to
+#keep privacy EX. student data comes in list json makes it an array and moves forward. For the session key there needs to be
+#a configurated file to generate keys if there is no file that the file is randomly generated with keys. def load(Self)
+#used to open the file and read the data only after this is done the user needs to save the file and then input data
+#Once the file is input the data gets allocated and generated for startyear, endyear, lastkey, minstep, maxstep and semster
+#following the generate code there is then added randomization code to keep privacy of students lastKey += random.randint(minStep, maxStep)
+finally - Initialize and checks if file exist if does not generates a new data it saves it.s
 
