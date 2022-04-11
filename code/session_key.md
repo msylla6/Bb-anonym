@@ -1,4 +1,9 @@
 # Understanding of the class Session Key - By Anushree Manoharrao
+
+The class SessionKey is managing a dictionary to anonymize a session in GMU format (e.g. 202140, which correspond to Summer 2021) to a number, keeping the chronological order not changed.
+
+
+
 If the sessionsKeys.txt file exists, 
 - then the function <strong>load</strong> is executed. 
 - else, <strong> generate </strong> and <strong> save </strong> functions are executed in that order. 
