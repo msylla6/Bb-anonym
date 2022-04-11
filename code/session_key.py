@@ -62,10 +62,14 @@ class SessionKey:
 
         #for loop to start year and end year keeps going and adding 1
         #dictionary allows user to add value to dictionary equal t lastKey
+          lastKey = random.randint(10, 100)
+
         for i in range(startYear, endYear + 1):
             for sem in semesters:
                 self.dictionary[(i * 100 + sem)] = lastKey
                 lastKey += random.randint(minStep, maxStep)
+                #lastKey += random.randint(10,100) changing the start key from 100 to any number from 10 to 100
+
 
         # print("lastKey: ",lastKey)
         # print("sessionDict: ", sessionDict)
