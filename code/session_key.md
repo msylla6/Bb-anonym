@@ -29,3 +29,38 @@ If the sessionsKeys.txt file exists,
   <li>  It creates a new file by writing to sessionkeys.txt file by reading from the dictionary generated </li>
   <li>  It appends the key and values using a space to the txt file </li>
 </ul>
+
+
+##### Sample session-config.json
+ - Start year and end year are defined, which tells about the range of time for which we are running the code to anonymize the values.
+ - List of semesters in GMU is described, where 10,40,70 are Spring, Summer and Fall respectively.
+ - To randomize the session values, a start value along with a range for min and max step is used.
+
+>
+{ 
+>
+    "start_year": 2004, 
+>
+    "end_year": 2030,
+>
+    "semesters_list": [10, 40, 70],
+>
+    "start_key": 100,
+>
+    "min_step": 10,
+>
+    "max_step": 100
+>
+}
+
+##### Sample of output in sessionKeys.txt
+ - 200040, 198   - Summer of 2000 is mapped to 198
+ - 200070, 250   - Fall of 2000 will be mapped to a number greater than 198 added to a value randomly chosen between 10 and 100
+>
+It keeps incrementing and adding in the same way for all the semesters till the end_year
+
+- session-config.json has to be created under a new folder <strong>config</strong> with a path like  "../config/session-config.json"
+- sessionKeys.txt has to be created under the same root path with a new folder <strong>key</strong> with a path like  "../key/sessionKeys.txt"
+
+
+
