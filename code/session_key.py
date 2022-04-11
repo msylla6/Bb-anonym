@@ -3,7 +3,7 @@
 # - David Liu (a1.py, a2.py gc processing)
 # - Anish Malik (a3.py - qr processing)
 # 2022 March-
-# - Anushree Manoharrao (session-key.py - documentation,comments)s
+# - Anushree Manoharrao (session-key.py - documentation,comments)
 # - Mouhamed Sylla import random, os, and json. Random is used to randomize keys and data. Json is needed to be imported to
 #parse the data that we get from the files with the keys and data so it is easier to divey up data and give random numbers to
 #keep privacy EX. student data comes in list json makes it an array and moves forward. For the session key there needs to be
@@ -16,7 +16,6 @@
 import random
 import os
 import json
-
 
 # Session Anonymization Key
 
@@ -64,8 +63,8 @@ class SessionKey:
         #dictionary allows user to add value to dictionary equal t lastKey
         for i in range(startYear, endYear + 1):
             for sem in semesters:
-                self.dictionary[(i * 100 + sem)] = lastKey
                 lastKey += random.randint(minStep, maxStep)
+                self.dictionary[(i * 100 + sem)] = lastKey
 
         # print("lastKey: ",lastKey)
         # print("sessionDict: ", sessionDict)
