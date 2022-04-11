@@ -29,3 +29,14 @@ If the sessionsKeys.txt file exists,
   <li>  It creates a new file by writing to sessionkeys.txt file by reading from the dictionary generated </li>
   <li>  It appends the key and values using a space to the txt file </li>
 </ul>
+
+# TO BE REVISED: 
+#  import random, os, and json. Random is used to randomize keys and data. Json is needed to be imported to
+#parse the data that we get from the files with the keys and data so it is easier to divey up data and give random numbers to
+#keep privacy EX. student data comes in list json makes it an array and moves forward. For the session key there needs to be
+#a configurated file to generate keys if there is no file that the file is randomly generated with keys. def load(Self)
+#used to open the file and read the data only after this is done the user needs to save the file and then input data
+#Once the file is input the data gets allocated and generated for startyear, endyear, lastkey, minstep, maxstep and semster
+#following the generate code there is then added randomization code to keep privacy of students lastKey += random.randint(minStep, maxStep)
+finally - Initialize and checks if file exist if does not generates a new data it saves it.s
+
