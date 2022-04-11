@@ -1,4 +1,4 @@
-# Understanding of the class Session Key - By Anushree Manoharrao
+# Understanding how to use the class Session Key - By Anushree Manoharrao
 
 The class SessionKey is managing a dictionary to anonymize a session in GMU format (e.g. 202140, which correspond to Summer 2021) to a number, keeping the chronological order not changed.
 
@@ -6,22 +6,25 @@ There are two files asssociated with sessions:
 - config/session-config.json: keeps the configuration data on how to generate the anonymized values for the sessions
 - key/sessionKeys.txt: keeps the current generated anonymized values for the sessions (if any)
 
-Before you use session keys, you must define the configuration file.
+Before you use session keys, you must define the configuration file. However, you do not need to define the key file, because this will be generated automatically by the code.
 
 ##### Sample session-config.json
- - Start year and end year are defined, which tells about the range of time for which we are running the code to anonymize the values.
- - List of semesters in GMU is described, where 10,40,70 are Spring, Summer and Fall respectively.
- - To randomize the session values, a start value along with a range for min and max step is used.
-`
-> { 
->  "start_year": 2004, 
->  "end_year": 2030,
->  "semesters_list": [10, 40, 70],
->  "start_key": 100,
->  "min_step": 10,
->  "max_step": 100
-> }
-`
+The file must contain values for all the following, as in the example below:
+- Start year and end year are inclusive and specify the range for which the anonymized session values are defined.
+- List of semesters, contains the current GMU semesters, where 10,40,70 are Spring, Summer and Fall respectively.
+- To randomize the session values, a start value along with a range for min and max step is used. The first key will start after the start key and for each next session (chronologically) a random value between min and max (inclusive) will be added. 
+
+```
+{ 
+ "start_year": 2004, 
+ "end_year": 2030,
+ "semesters_list": [10, 40, 70],
+ "start_key": 100,
+ "min_step": 10,
+ "max_step": 100
+}
+```
+
 If the sessionsKeys.txt file exists, 
 - then the function <strong>load</strong> is executed. 
 - else, <strong> generate </strong> and <strong> save </strong> functions are executed in that order. 
