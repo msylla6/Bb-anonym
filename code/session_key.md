@@ -1,4 +1,10 @@
-# Understanding how to use the class Session Key - By Anushree Manoharrao
+# Anonymizing the Sessions
+
+Contributers:
+- Anushree Manoharrao (documentation)
+- 
+
+## Understanding how to configure the class Session Key
 
 The class SessionKey is managing a dictionary to anonymize a session in GMU format (e.g. 202140, which correspond to Summer 2021) to a number, keeping the chronological order not changed.
 
@@ -8,7 +14,7 @@ There are two files asssociated with sessions:
 
 Before you use session keys, you must define the configuration file. However, you do not need to define the key file, because this will be generated automatically by the code.
 
-##### Sample session-config.json
+### Sample session-config.json
 The file must contain values for all the following, as in the example below:
 - Start year and end year are inclusive and specify the range for which the anonymized session values are defined.
 - List of semesters, contains the current GMU semesters, where 10,40,70 are Spring, Summer and Fall respectively.
@@ -25,11 +31,41 @@ The file must contain values for all the following, as in the example below:
 }
 ```
 
+### Sample of output in sessionKeys.txt
+ - 200040, 198   - Summer of 2000 is mapped to 198
+ - 200070, 250   - Fall of 2000 will be mapped to a number greater than 198 added to a value randomly chosen between 10 and 100
+>
+The new anonymized values are added in the same chronological pattern as seen above.
+
+- session-config.json has to be created under a new folder <strong>config</strong> with a path like  "../config/session-config.json"
+- sessionKeys.txt has to be created under the same root path with a new folder <strong>key</strong> with a path like  "../key/sessionKeys.txt"
+
+## Understanding how to call the class Session Key
+
+To use the anonymized sessions you must:
+- import the class
+```
+import session_key;
+```
+- create only one instance of the class (do not duplicate the call)
+```
+sessionKey = session_key.SessionKey()
+```
+
+This will create an instance and load or initialize its anonymization dictioary. To obtain the anonymized value for a given session (e.g. 201040) you will call:
+```
+anonymizedSessionCode = self.sessionKey.dictionary[sessionCode]
+```
+
+## Understanding how the class Session Key is coded
+
+### Explaining sessionsKeys.txt
+
 If the sessionsKeys.txt file exists, 
 - then the function <strong>load</strong> is executed. 
 - else, <strong> generate </strong> and <strong> save </strong> functions are executed in that order. 
 
-##### The load function is performing the following operations:
+### The load function is performing the following operations:
 <ul>
   <li>  It opens the sessionKeys.txt that contains the anonymized values for the sessions and reads it line by line </li>
   <li>  Each line looks like "200410 166", it has the actual session on its first and the second part has the anonymized value for that session.</li>
@@ -38,7 +74,7 @@ If the sessionsKeys.txt file exists,
  <li> All of the session values are stored in this format. </li>
  </ul>
 
-##### The generate function is performing the following operations:
+### The generate function is performing the following operations:
 <ul>
   <li>  It uses the <strong>session-config.json</strong> file to generate the sessionkey.txt file </li>
   <li>  It opens and loads the session-config.json file </li>
@@ -52,7 +88,7 @@ If the sessionsKeys.txt file exists,
   <li>  The generated dictionary is saved by executing the “save” function </li>
 </ul>
 
-##### The save functions is performing the following operations:
+### The save functions is performing the following operations:
 <ul>
  <li>  It creates a new file by writing to sessionkeys.txt file. </li>
  <li>  It does so by reading from the dictionary that was generated,  based on keys sorted in order</li>
@@ -64,21 +100,12 @@ If the sessionsKeys.txt file exists,
 
 
 
-##### Sample of output in sessionKeys.txt
- - 200040, 198   - Summer of 2000 is mapped to 198
- - 200070, 250   - Fall of 2000 will be mapped to a number greater than 198 added to a value randomly chosen between 10 and 100
->
-The new anonymized values are added in the same chronological pattern as seen above.
 
-- session-config.json has to be created under a new folder <strong>config</strong> with a path like  "../config/session-config.json"
-- sessionKeys.txt has to be created under the same root path with a new folder <strong>key</strong> with a path like  "../key/sessionKeys.txt"
 
 
 =======
-# TO BE REVISED: 
-#  import random, os, and json. Random is used to randomize keys and data. Json is needed to be imported to
-#parse the data that we get from the files with the keys and data so it is easier to divey up data and give random numbers to
-#keep privacy EX. student data comes in list json makes it an array and moves forward. For the session key there needs to be
+
+ For the session key there needs to be
 #a configurated file to generate keys if there is no file that the file is randomly generated with keys. def load(Self)
 #used to open the file and read the data only after this is done the user needs to save the file and then input data
 #Once the file is input the data gets allocated and generated for startyear, endyear, lastkey, minstep, maxstep and semster

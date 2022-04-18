@@ -1,5 +1,7 @@
 # Created by Mihai Boicu 
 
+# python session_key_test.py
+
 import session_key;
 
 def main():
