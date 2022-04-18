@@ -10,7 +10,7 @@ import os
 import random
 import session_key
 
-# Section Anonymization Key
+# Anonymization of the Section Key
 class SectionKey:
 
     # key file with randomly generated keys for sections
