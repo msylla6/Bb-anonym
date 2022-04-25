@@ -1,6 +1,39 @@
-Section.md
-Understanding how to configure the class Section Key
-The class section Is used to randomize the section portion on the GMU database when handling student grades. This class can be used for many different uses such as randomizing sections in any grade system and to be used in tandem with the session key file.
+# Anonymizing the Course Sections
+
+Contributers:
+- .... 
+
+## Understanding how to configure the class section key
+
+The class section is used to randomize the section code (i.e. 10851.202110) of a GMU course. This code will be randomized using the sesession anonymized key for the session part (e.g., 395 for 202110), and will generate a random number from 0 to a max value for the section code (i.e. 10851). The final code will be obtained by the formula:
+- sesessioncode * maxvalue + section code
+
+Based on the number of section that you plan to anonymize in each session, you may change the  max value in the code (i.e., MAX_SECTIONS_PER_SESSION). Its default value is 100. 
+
+This section code appears in the name of the files when downloaded from the Blackboard, or must  be added to the name of some files. For instance a grade book downloaded file will contain the  section code in its  name. 
+
+## Understanding how to call the class section key
+
+To use the anonymized section key you must:
+- create a session key instance (only one must be created for your anonymized code)
+```
+import session_key
+
+def main():
+  sessionKey = session_key.SessionKey()
+```
+- import the class
+```
+import section_key;
+```
+- create only one instance of the class (do not duplicate the call)
+```
+sectionKey = section_key.SectionKey(sessionKey)
+```
+
+Always this class will be used in tandem with the session key file and you must create only one instance of each for your entire code.
+
+## Understanding how the class section key is coded
 
 Imports associated with Section
 Import OS
