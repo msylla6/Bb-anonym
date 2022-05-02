@@ -1,12 +1,11 @@
 # Anonymizing the Sessions
 
 Contributers:
-- Anushree Manoharrao (documentation)
-- 
+- Anushree Manoharrao (documentation) Spring 2022
 
 ## Understanding how to configure the class Session Key
 
-The class SessionKey is managing a dictionary to anonymize a session in GMU format (e.g. 202140, which correspond to Summer 2021) to a number, keeping the chronological order not changed.
+The class SessionKey is managing a dictionary to anonymize a session in GMU format (e.g., 202140 is the GMU format for a sesssion, which correspond to Summer 2021) to a number, keeping the chronological order not changed.
 
 There are two files asssociated with sessions:
 - config/session-config.json: keeps the configuration data on how to generate the anonymized values for the sessions
