@@ -3,6 +3,9 @@
 Contributers:
 - Anushree Manoharrao (documentation) Spring 2022
 
+Editor and reviewer:
+- Mihai Boicu
+
 ## Understanding how to configure the class Session Key
 
 The class SessionKey is managing a dictionary to anonymize a session in GMU format to a number that will hide when a course took place, but keeping the chronological order not changed. For instance, 202140 is the GMU format for a sesssion, which correspond to Summer 2021 and a possible generated anonymized code may be 237. For Fall 2021, 202170 a  generated anonymized code may be 314, but cannot be 129 (because will not maintain the chronological order).
