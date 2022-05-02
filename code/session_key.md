@@ -5,16 +5,16 @@ Contributers:
 
 ## Understanding how to configure the class Session Key
 
-The class SessionKey is managing a dictionary to anonymize a session in GMU format (e.g., 202140 is the GMU format for a sesssion, which correspond to Summer 2021) to a number, keeping the chronological order not changed.
+The class SessionKey is managing a dictionary to anonymize a session in GMU format to a number that will hide when a course took place, but keeping the chronological order not changed. For instance, 202140 is the GMU format for a sesssion, which correspond to Summer 2021 and a possible generated anonymized code may be 237. For Fall 2021, 202170 a  generated anonymized code may be 314, but cannot be 129 (because will not maintain the chronological order).
 
 There are two files asssociated with sessions:
 - config/session-config.json: keeps the configuration data on how to generate the anonymized values for the sessions
 - key/sessionKeys.txt: keeps the current generated anonymized values for the sessions (if any)
 
-Before you use session keys, you must define the configuration file. However, you do not need to define the key file, because this will be generated automatically by the code.
+Before you use session keys, you must define the configuration file. However, you must not define the key file, because this will be generated automatically by the code.
 
 ### Sample session-config.json
-The file must contain values for all the following, as in the example below:
+This file must contain values for all the following, as in the example below:
 - Start year and end year are inclusive and specify the range for which the anonymized session values are defined.
 - List of semesters, contains the current GMU semesters, where 10,40,70 are Spring, Summer and Fall respectively.
 - To randomize the session values, a start value along with a range for min and max step is used. The first key will start after the start key and for each next session (chronologically) a random value between min and max (inclusive) will be added. 
@@ -31,13 +31,18 @@ The file must contain values for all the following, as in the example below:
 ```
 
 ### Sample of output in sessionKeys.txt
- - 200040, 198   - Summer of 2000 is mapped to 198
- - 200070, 250   - Fall of 2000 will be mapped to a number greater than 198 added to a value randomly chosen between 10 and 100
+```
+200040 198
+200070 250
+```
+These numbers were generated as follows:
+ - 200040 198   - Summer of 2000 is mapped to a number greater than 100 by adding a random value between 10 and 100 (e.g. 98), obtaining 198
+ - 200070 250   - Fall of 2000 will be mapped to a number greater than 198 to which we added a random value between 10 and 100
 >
 The new anonymized values are added in the same chronological pattern as seen above.
 
-- session-config.json has to be created under a new folder <strong>config</strong> with a path like  "../config/session-config.json"
-- sessionKeys.txt has to be created under the same root path with a new folder <strong>key</strong> with a path like  "../key/sessionKeys.txt"
+- session-config.json has to be created under a new folder <strong>config</strong> under the root path of the project with a path like  "../config/session-config.json"
+- sessionKeys.txt will be generated under the same root path with a new folder <strong>key</strong> with a path like  "../key/sessionKeys.txt"
 
 ## Understanding how to call the class Session Key
 
@@ -56,22 +61,52 @@ This will create an instance and load or initialize its anonymization dictioary.
 anonymizedSessionCode = self.sessionKey.dictionary[sessionCode]
 ```
 
-## Understanding how the class Session Key is coded
+## Understanding how the class SessionKey is coded
 
-### Explaining sessionsKeys.txt
+### Class initialization
 
 If the sessionsKeys.txt file exists, 
 - then the function <strong>load</strong> is executed. 
 - else, <strong> generate </strong> and <strong> save </strong> functions are executed in that order. 
 
-### The load function is performing the following operations:
-<ul>
-  <li>  It opens the sessionKeys.txt that contains the anonymized values for the sessions and reads it line by line </li>
-  <li>  Each line looks like "200410 166", it has the actual session on its first and the second part has the anonymized value for that session.</li>
-  <li>  Each of these lines are split based on space and saved in dictionary as a key-value pair where actual session is key and its corresponding anonymized number is the value. </li>
- <li> For the above session the parts would look like ['200410', '166'], where parts[0] is the key with 200410 and parts[1] is it's value with 166.</li>
- <li> All of the session values are stored in this format. </li>
- </ul>
+```
+    def __init__(self):
+        if os.path.isfile(self.KEY_FILE_NAME):
+            self.load()
+        else:
+            self.generate()
+            self.save()
+```          
+
+### Function: load
+
+
+```
+    def load(self):
+        file = open(self.KEY_FILE_NAME)
+        lines = file.readlines()
+        for line in lines:
+            parts = line.split(" ")
+            self.dictionary[int(parts[0])] = int(parts[1])
+        file.close()
+```
+The load function is performing the following operations:
+- It opens the sessionKeys.txt that contains the anonymized values for the sessions and reads it line by line 
+```
+        file = open(self.KEY_FILE_NAME)
+        lines = file.readlines()
+        for line in lines:
+```
+- Each line looks like "200410 166", it has the actual session on its first and the second part has the anonymized value for that session.
+- Each of these lines are split based on space and saved in dictionary as a key-value pair where actual session is key and its corresponding anonymized number is the value.
+- For the above session the parts would look like ['200410', '166'], where parts[0] is the key with 200410 and parts[1] is it's value with 166.
+```
+            parts = line.split(" ")
+```
+- All of the session values are stored in the dictionary associating the anonymized code to the original session. 
+```
+            self.dictionary[int(parts[0])] = int(parts[1])
+```
 
 ### The generate function is performing the following operations:
 <ul>
