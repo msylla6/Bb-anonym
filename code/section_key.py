@@ -20,7 +20,7 @@ class SectionKey:
     MAX_SECTIONS_PER_SESSION = 100
 
     # the session anonymization key
-    # sessionKey: session_key.SessionKey
+    sessionKey: session_key.SessionKey
 
     # a map between a section code in a given semester and its anonymized code
     # example "11233.202110" is associated with 12345 where 123 is the code for session 202110 and 45 is the code for section 11233
