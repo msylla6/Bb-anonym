@@ -1,7 +1,7 @@
 # Anonymizing the Course Sections
 
 Contributers:
-- .... 
+-Mouhamed Sylla (Documentation) Spring 2022
 
 ## Understanding how to configure the class section key
 
@@ -12,26 +12,28 @@ Based on the number of section that you plan to anonymize in each session, you m
 
 This section code appears in the name of the files when downloaded from the Blackboard, or must  be added to the name of some files. For instance a grade book downloaded file will contain the  section code in its  name. 
 
-## Understanding how to call the class section key
-
-To use the anonymized section key you must:
-- create a session key instance (only one must be created for your anonymized code)
-```
-import session_key
-
+Sample of output in section_key
+.11233.202110, 
+10851.202110,
+11067.202110
+These numbers were generated in the same way of the input of:
 def main():
-  sessionKey = session_key.SessionKey()
-```
-- import the class
-```
-import section_key;
-```
-- create only one instance of the class (do not duplicate the call)
-```
-sectionKey = section_key.SectionKey(sessionKey)
-```
+	    sessionKey = session_key.SessionKey()
+	    sectionKey = section_key.SectionKey(sessionKey)
+	    print(sectionKey.get("11233.202110"))
+	    print(sectionKey.get("10851.202110"))
+	    print(sectionKey.get("11067.202110"))
+	    sectionKey.save()
+	
 
-Always this class will be used in tandem with the session key file and you must create only one instance of each for your entire code.
+	if __name__ == '__main__':
+	    main()
+
+and formula of:
+•	sesessioncode * maxvalue + section code
+
+•	Sample of output in sectionkeys.txt Print(sectionKey.get(“11233.202110”)) Print(sectionKey.get(“10851.202110”)) Print(sectionKey.get(“11067.202110”)) With the output being 11233.202110, 10851.202110, and 11067.202110. 202110 is the session got from session_key and the first 5 numbers being the randomized number for the section with the equation of (sessionCode * 100 +random.random() *100) example "11233.202110" is associated with 12345 where 123 is the code for session 202110 and 45 is the code for section 11233 The Output is then put into the sectionkey.txt file
+
 
 ## Understanding how the class section key is coded
 
@@ -46,30 +48,7 @@ Section_key_test.py: Used to show how the keys look after generated
 Sectionkeys.txt: This is where the keys are held after being saved and generated
 Moch Test for Section md
 import session_key	
-		import section_key
 		
-
-		def main():
-		    sessionKey = session_key.SessionKey()
-		    sectionKey = section_key.SectionKey(sessionKey)
-		    print(sectionKey.get("11233.202110"))
-		    print(sectionKey.get("10851.202110"))
-		    print(sectionKey.get("11067.202110"))
-		    sectionKey.save()
-		
-
-		if __name__ == '__main__':
-		    main()
-
-Sample of output in sectionkeys.txt
-Print(sectionKey.get(“11233.202110”))
-Print(sectionKey.get(“10851.202110”))
-Print(sectionKey.get(“11067.202110”))
-With the output being
-11233.202110, 10851.202110, and 11067.202110.
-202110 is the session got from session_key and the first 5 numbers being the randomized number for the section with the equation of (sessionCode * 100 +random.random() *100)
-example "11233.202110" is associated with 12345 where 123 is the code for session 202110 and 45 is the code for section 11233
- The Output is then put into the sectionkey.txt file
 
 Understand how to call the Section Key
 Import section_key.py
