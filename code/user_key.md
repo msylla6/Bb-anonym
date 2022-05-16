@@ -8,9 +8,16 @@ Editor and reviewer:
 
 ## Understanding how to configure the class User Key
 
-The class UserKey is managing a dictionary to anonymize a user's email id by capturing a random integer value betweeen the min and max user codes upon checking if userKeys.txt file is present or not.
+The class UserKey is managing a dictionary to anonymize a user's email id (e.g. jdoe) by generating a random integer value betweeen a min and max user codes that are provided in a configuration file. The generated anonymized values are stored in a key file. 
 
-## The user-config.json file is defined with min_key and max_key values as given below
+There are two files asssociated with users:
+- config/user-config.json: keeps the configuration data on how to generate the anonymized values for the user email ids
+- key/userKeys.txt: keeps the current generated anonymized values for the user email ids (if any)
+
+Before you use user keys, you must define the configuration file. However, you must not define the key file, because this will be generated automatically by the code.
+
+### Sample user-config.json
+The user-config.json file is defines the values for the min_key and max_key between which the anonymized keys for students email ids are generated:
 
 '''
 {
@@ -18,6 +25,20 @@ The class UserKey is managing a dictionary to anonymize a user's email id by cap
     "max_key": 99999
 }
 '''
+
+=== CHECK FROM HERE
+### Sample of output in userKeys.txt
+
+```
+jdoe1 24351
+jdoe2 45001
+```
+
+## Understanding how to call the class Session Key
+
+
+
+## Understanding how the class SessionKey is coded
 
 It begins with checking if the userKeys.txt is present or not. Based on that, different functions are executed. If it is present, it executes the load function, otherwise it executes loadConfig function to generate the userKeys.txt which is given by the code below.
 
@@ -28,7 +49,7 @@ def __init__(self):
             self.load()
 '''
 
-## Understanding of loadConfig()
+### Understanding of loadConfig()
 
 The function loadConfig() is executed when there is no userKey,txt present beforehand. It begins with first opening the user-config.json from  "../config/user-config.json". The json file is then read by loading it after which the minUserCode and maxUserCode are set based on the values defined in the user-config.json file. The json file is closed at the end of the function. Below code is used to set min and max values.
 
@@ -36,7 +57,7 @@ The function loadConfig() is executed when there is no userKey,txt present befor
 self.minUserCode = userConfigData['min_key']
 self.maxUserCode = userConfigData['max_key']
 '''
-## Understanding load() function
+### Understanding load() function
 
 The function load() is executed when userKeys.txt is already present. It begins with reading the file from  "../key/userKeys.txt" and it is read line by line to  store the values next in the dictionary as a key-value pair upon splitting the already coded userid and his key from the file based on space. It is given by the code below.
 The function is ended with the closing of the userKeys.txt file.
