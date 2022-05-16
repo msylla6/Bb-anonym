@@ -87,6 +87,47 @@ import random
 import session_key
 ```
 
-To make the class, sectionkey, work you need: Session_key: Used after the session key has ran and is used to connect the session with the section There is a maximum of 100 sections per session Config/session-config.json: Keeps the configuration data on how to generate the anoymized values for the session Section_key_test.py: Used to show how the keys look after generated Sectionkeys.txt: This is where the keys are held after being saved and generated Moch Test for Section md import session_key import section_key
-Understand how to call the Section Key Import section_key.py Use session to create section call section to see if anonym saved the file then Create the instance of the class and do not duplicate the call
+To make the class, sectionkey, work you need:
+Session_key: Used after the session key has ran and is used to connect the session with the section. There is a maximum of 100 sections per session Config/session-config.json. After session_key runs there has been the process of numbers already been generated and saved.
+To show the numbers the section got it keeps the configuration data on how to generate the anoymized values for the session in sectionkeys.txt.
+This is where the keys are held after being saved and generated. 
+Section_key_test.py can be used to run a moch test to generate numbers. Like the moch test Section uses import session_key and import section_key.
+```
+ def load(self):
+        file = open(self.keyFileName, "r")
+        lines = file.readlines()
+        for line in lines:
+            sections = line.split(" ")
+            self.dictionary[str(sections[0])] = sections[1]
+        file.close()
+```
+Uses the file open to retrieve the numbers that have been generated and read. Next opens file, writes in file, and sorts values.
+```
+   parts = section.split(".")
+        sectionPart = int(parts[0])
+        sessionPart = int(parts[1])
+        sessionCode = self.sessionKey.dictionary[sessionPart]
+        sectionCode = -1
+```
+After getting the numbers we use split to differentiate the section and time to make the numbers clear but randomized in a specific order
+```
+
+        while True:
+            sectionCode = int(sessionCode * 100 + random.random() * 100)
+            if not sectionCode in self.dictionary.values():
+                break
+        self.dictionary[section] = sectionCode
+        # return code
+        return self.dictionary[section]
+```
+Needs to use a formula to make sure there is actual randomization so the while loop is choosen to output the formula.
+
+
+## Understand how to call the Section Key 
+```
+Import section_key.py
+,
+sectionKey = SectionKey(sessionKey)
+```
+
 
