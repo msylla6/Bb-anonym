@@ -80,16 +80,27 @@ import section_key;
 
 ## Understanding how the class section key is coded
 
-Imports associated with SectionKey
+The following imports are used by SectionKey:
 ```
 import os
 import random
 import session_key
 ```
 
-To make the class, sectionkey, work you need:
-Session_key: Used after the session key has ran and is used to connect the session with the section. There is a maximum of 100 sections per session Config/session-config.json. After session_key runs there has been the process of numbers already been generated and saved.
-To show the numbers the section got it keeps the configuration data on how to generate the anoymized values for the session in sectionkeys.txt.
+The class SectionKey is using the class SessionKey (file section_key.py). You must first  initialize the session key and use this instance in your section initialization. First time when is used the SessionKey instance will generate and same the anonymization codes for each session, and in further calls the same will be reused. 
+
+By default, there are maximum 100 sections per session. This is hardcoded in the coode/section_key.py. You can modify it before you start the anonymization process.
+```
+    # maximum number of sections allowed in a session
+    MAX_SECTIONS_PER_SESSION = 100
+```
+By default, the anonymization key is stored in the file key/sectionKeys.txt. If you want to change the key file you must modify the value of the following constant:
+```
+    # key file with randomly generated keys for sections
+    KEY_FILE_NAME = "../key/sectionKeys.txt"
+```
+==== CONTINUE FROM HERE
+
 This is where the keys are held after being saved and generated. 
 Section_key_test.py can be used to run a moch test to generate numbers. Like the moch test Section uses import session_key and import section_key.
 ```
